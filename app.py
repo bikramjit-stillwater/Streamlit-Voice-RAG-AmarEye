@@ -11,9 +11,9 @@ import tempfile
 import os
 
 st.set_page_config(
-    page_title="SHARAN Conversational AI",
+    page_title="Amar Eye AI",
     layout="wide",
-    page_icon="🎤"
+    page_icon="👁️"
 )
 
 # -----------------------------
@@ -35,12 +35,12 @@ if "selected_query" not in st.session_state:
 def get_text(key):
     texts = {
         "english": {
-            "title": "SHARAN Conversational AI",
+            "title": "Amar Eye AI",
             "voice_input": "Voice Input",
             "sample_questions": "Sample Questions",
-            "reduce_medicines": "Reduce Medicines",
-            "type2_reversed": "Type 2 Reversed",
-            "diabetes_reversed": "Can Type 2 Be Reversed?",
+            "eye_problems": "What eye problems are people facing?",
+            "improvements": "What improvements do people notice?",
+            "experience": "How does the experience impact recovery?",
             "ask_question": "Ask your question",
             "ask_btn": "Ask",
             "answer": "Answer",
@@ -55,12 +55,12 @@ def get_text(key):
             "no_answer": "Not found clearly in the testimonials."
         },
         "hindi": {
-            "title": "शरण संवादात्मक कृत्रिम बुद्धिमत्ता",
+            "title": "अमर आई एआई",
             "voice_input": "वॉइस इनपुट",
             "sample_questions": "नमूना प्रश्न",
-            "reduce_medicines": "दवा कम करें",
-            "type2_reversed": "टाइप 2 कम हुआ",
-            "diabetes_reversed": "क्या टाइप 2 उलटा हो सकता है?",
+            "eye_problems": "लोग कौन सी आँखों की समस्याओं का सामना कर रहे हैं?",
+            "improvements": "लोग कौन से सुधार देख रहे हैं?",
+            "experience": "अनुभव रिकवरी यात्रा को कैसे प्रभावित करता है?",
             "ask_question": "अपना प्रश्न पूछें",
             "ask_btn": "पूछें",
             "answer": "उत्तर",
@@ -98,7 +98,6 @@ with col_lang:
 # -----------------------------
 @st.cache_resource
 def load_rag_system():
-    #csv_path = "diabetes_testimonials_only.csv"
     csv_path = "Amar_Eye_Yoga_Data.csv"
     df = pd.read_csv(csv_path)
     df = df[["title", "url", "transcript"]].copy()
@@ -140,7 +139,7 @@ TRANSCRIPT:
 documents, embed_model, index = load_rag_system()
 
 # -----------------------------
-# Helpers
+# Helpers (unchanged)
 # -----------------------------
 def detect_language_from_ui():
     return st.session_state.language
@@ -183,7 +182,7 @@ def ask_rag(query, top_k=3, answer_language="English"):
     retrieval_query = translate_query_for_retrieval(query, target_language=answer_language)
     results = retrieve(retrieval_query, top_k=top_k)
 
-    context = "\n\n".join([
+    context = "\\n\\n".join([
         f"""SOURCE {i+1}
 TITLE: {r['title']}
 URL: {r['url']}
@@ -209,7 +208,7 @@ If the answer is not clearly present, say exactly:
 """
 
     prompt = f"""
-You are a testimonial-based assistant.
+You are a testimonial-based assistant for Amar Eye Yoga.
 
 Rules:
 1. Answer only from the provided testimonial context.
@@ -240,9 +239,7 @@ Context:
         ]
     }
 
-# -----------------------------
-# Voice helpers
-# -----------------------------
+# Voice helpers (unchanged)
 def speech_to_text(audio_bytes, lang_code="en-IN"):
     recognizer = sr.Recognizer()
 
@@ -278,7 +275,7 @@ def text_to_speech(text, lang="en"):
         return None
 
 # -----------------------------
-# Theme / UI
+# Theme / UI (unchanged)
 # -----------------------------
 st.markdown("""
 <style>
@@ -523,14 +520,14 @@ st.markdown(f"""
 
 preset_questions_map = {
     "English": [
-        "Find testimonials where people reduced diabetes medicine after switching to plant-based diet",
-        "Give me testimonial of patient who reduced type 2 diabetes",
-        "Can type 2 diabetes be reversed?"
+        "What kind of eye problems are people facing before coming to Amar Eye Yoga?",
+        "What improvements do people notice after following the eye exercises and treatment?",
+        "How does the overall experience (training, environment, support) impact their recovery journey?"
     ],
     "Hindi": [
-        "ऐसे प्रशंसापत्र खोजें जहाँ लोगों ने प्लांट-बेस्ड डाइट अपनाने के बाद डायबिटीज़ की दवाइयाँ कम कीं",
-        "ऐसे मरीज का प्रशंसापत्र बताइए जिसने टाइप 2 डायबिटीज़ कम की",
-        "क्या टाइप 2 डायबिटीज़ उलटी हो सकती है?"
+        "अमर आई योगा आने से पहले लोग कौन सी आँखों की समस्याओं का सामना कर रहे थे?",
+        "आँखों के व्यायाम और उपचार के बाद लोग कौन से सुधार देख रहे हैं?",
+        "कुल मिलाकर अनुभव (प्रशिक्षण, वातावरण, समर्थन) उनकी रिकवरी यात्रा को कैसे प्रभावित करता है?"
     ]
 }
 
@@ -546,15 +543,15 @@ st.markdown(f'<div class="section-title">💡 {get_text("sample_questions")}</di
 c1, c2, c3 = st.columns(3)
 
 with c1:
-    if st.button(get_text("reduce_medicines")):
+    if st.button(get_text("eye_problems")):
         st.session_state.selected_query = preset_questions[0]
 
 with c2:
-    if st.button(get_text("type2_reversed")):
+    if st.button(get_text("improvements")):
         st.session_state.selected_query = preset_questions[1]
 
 with c3:
-    if st.button(get_text("diabetes_reversed")):
+    if st.button(get_text("experience")):
         st.session_state.selected_query = preset_questions[2]
 
 st.markdown("<hr>", unsafe_allow_html=True)
